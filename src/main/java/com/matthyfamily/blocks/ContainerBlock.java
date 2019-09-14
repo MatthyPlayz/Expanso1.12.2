@@ -1,5 +1,6 @@
 package com.matthyfamily.blocks;
 
+import com.matthyfamily.slot.SlotOutput;
 import net.minecraft.entity.player.EntityPlayer;
 import net.minecraft.inventory.Container;
 import net.minecraft.inventory.IInventory;
@@ -19,7 +20,7 @@ public class ContainerBlock extends Container {
         // This container references items out of our own inventory (the 9 slots we hold ourselves)
         // as well as the slots from the player inventory so that the user can transfer items between
         // both inventories. The two calls below make sure that slots are defined for both inventories.
-        addOwnSlots();
+        addOwnSlots(playerInventory);
         addPlayerSlots(playerInventory);
     }
 
@@ -41,20 +42,23 @@ public class ContainerBlock extends Container {
         }
     }
 
-    private void addOwnSlots() {
+    private void addOwnSlots(IInventory playerInventory) {
         IItemHandler itemHandler = this.te.getCapability(CapabilityItemHandler.ITEM_HANDLER_CAPABILITY, null);
         int x = 9;
         int y = 6;
 
-        // Add our own slots
-        int slotIndex = 0;
-        for (int i = 0; i < itemHandler.getSlots(); i++) {
-            addSlotToContainer(new SlotItemHandler(itemHandler, slotIndex, x, y));
-            slotIndex++;
-            x += 18;
-        }
-    }
+        // Add our own slots (input)
+        addSlotToContainer(new SlotItemHandler(itemHandler, 0, 45, 50));
+        addSlotToContainer(new SlotItemHandler(itemHandler, 1, 90, 50));
+        addSlotToContainer(new SlotItemHandler(itemHandler, 2, 135, 50));
 
+        // Add our own slots (output)
+        addSlotToContainer(new SlotOutput(playerInventory, 3, 262,50));
+
+    }
+    public boolean isItemValid(ItemStack par1ItemStack) {
+        return false;
+    }
     @Override
     public ItemStack transferStackInSlot(EntityPlayer playerIn, int index) {
         ItemStack itemstack = ItemStack.EMPTY;
